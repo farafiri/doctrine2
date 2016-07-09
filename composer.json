@@ -3,7 +3,6 @@
     "type": "library",
     "description": "Object-Relational-Mapper for PHP",
     "keywords": ["orm", "database"],
-    "version": "2.5"
     "homepage": "http://www.doctrine-project.org",
     "license": "MIT",
     "authors": [
