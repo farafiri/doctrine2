@@ -38,6 +38,13 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\ListenersInvoker;
 
+use Doctrine\ORM\Cache\Persister\CachedPersister;
+use Doctrine\ORM\Persisters\Entity\BasicEntityPersister;
+use Doctrine\ORM\Persisters\Entity\SingleTablePersister;
+use Doctrine\ORM\Persisters\Entity\JoinedSubclassPersister;
+use Doctrine\ORM\Utility\IdentifierFlattener;
+use Doctrine\ORM\Cache\AssociationCacheEntry;
+
 /**
  * The UnitOfWork is responsible for tracking changes to objects during an
  * "object-level" transaction and for writing out changes to the database
@@ -3022,15 +3029,14 @@ class UnitOfWork implements PropertyChangedListener
             return $this->collectionPersisters[$type];
         }
 
-        switch ($type) {
-            case ClassMetadata::ONE_TO_MANY:
-                $persister = new Persisters\OneToManyPersister($this->em);
-                break;
-
-            case ClassMetadata::MANY_TO_MANY:
-                $persister = new Persisters\ManyToManyPersister($this->em);
-                break;
+        if (!isset($association['persister'])) {
+            $association['persister'] = (ClassMetadata::ONE_TO_MANY === $association['type'])
+                ? 'Doctrine\ORM\Persisters\Collection\OneToManyPersister'
+                : 'Doctrine\ORM\Persisters\Collection\ManyToManyPersister';
         }
+
+        $persister = $association['persister'];
+        $persister = new $persister($this->em);
 
         $this->collectionPersisters[$type] = $persister;
 

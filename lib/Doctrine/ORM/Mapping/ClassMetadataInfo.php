@@ -1351,10 +1351,12 @@ class ClassMetadataInfo implements ClassMetadata
             $mapping['targetEntity'] = ltrim($mapping['targetEntity'], '\\');
         }
 
-        if ( ($mapping['type'] & self::MANY_TO_ONE) > 0 &&
-                isset($mapping['orphanRemoval']) &&
-                $mapping['orphanRemoval'] == true) {
+        if (isset($mapping['persister'])) {
+            $mapping['persister'] = $this->fullyQualifiedClassName($mapping['persister']);
+            $mapping['persister'] = ltrim($mapping['persister'], '\\');
+        }
 
+        if (($mapping['type'] & self::MANY_TO_ONE) > 0 && isset($mapping['orphanRemoval']) && $mapping['orphanRemoval'] == true) {
             throw MappingException::illegalOrphanRemoval($this->name, $mapping['fieldName']);
         }
 
