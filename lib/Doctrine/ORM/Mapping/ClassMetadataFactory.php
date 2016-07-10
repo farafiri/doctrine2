@@ -108,6 +108,7 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
 
             if ($parent->isMappedSuperclass) {
                 $class->setCustomRepositoryClass($parent->customRepositoryClassName);
+                $class->setCustomPersisterClass($parent->customPersisterClassName);
             }
         }
 
